@@ -8,5 +8,8 @@ import System.Exit
 main :: IO ()
 main = do
   args <- getArgs
-  hints <- hlint $ ["src", "--cpp-define=HLINT", "--cpp-ansi"] ++ args
+  hints <- hlint $ ["src"
+                   , "--cpp-define=HLINT"
+                   , "--cpp-ansi"
+                   , "--ignore=Use camelCase"] ++ args
   unless (null hints) exitFailure

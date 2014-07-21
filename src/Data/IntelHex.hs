@@ -99,7 +99,7 @@ instance Show Record where
     printf ":%02X%04X%s%s%02X" len sa (show rt) (showListFmt "%02X" db) cs
 
 showListFmt :: (PrintfArg a) => String -> [a] -> String
-showListFmt s xs = concatMap (printf s) xs
+showListFmt s = concatMap (printf s)
 
 -- | Pretty print.
 toString :: [Record] -> String

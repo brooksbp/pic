@@ -78,21 +78,19 @@ data MachInst
 -- Printer
 
 showDSel :: DSel -> String
-showDSel d = case d of
-  True  -> "f"
-  False -> "w"
+showDSel d = if d then "f" else "w"
 
 showByteOp :: String -> FReg -> DSel -> String
 showByteOp op f d = printf "%s\t0x%x, %s" op f (showDSel d)
 
 showByteOp1 :: String -> FReg -> String
-showByteOp1 op f = printf "%s\t0x%x" op f
+showByteOp1 = printf "%s\t0x%x"
 
 showBinOp :: String -> FReg -> Bit -> String
-showBinOp op f b = printf "%s\t0x%x, 0x%x" op f b
+showBinOp = printf "%s\t0x%x, 0x%x"
 
 showLit :: String -> Lit -> String
-showLit op k = printf "%s\t0x%x" op k
+showLit = printf "%s\t0x%x"
 
 instance Show MachInst where
   show (MI_addwf   f d) = showByteOp "addwf" f d
@@ -134,19 +132,18 @@ instance Show MachInst where
 -- | Pretty print.
 toString :: Bool -> Bool -> [MachInst] -> String
 toString withAddrs withMachCode ms =
-  unlines $ case withAddrs of
-    True  -> addAddrs 0 $ showMI withMachCode ms
-    False -> showMI withMachCode ms
+  unlines $ if withAddrs then addAddrs 0 $ showMI withMachCode ms else
+    showMI withMachCode ms
   where
     showMI :: Bool -> [MachInst] -> [String]
     showMI _ [] = []
-    showMI mc (x:xs) = case mc of
-      True  -> (printf "%04x     %s" (assembleInst x) (show x)) : showMI mc xs
-      False -> show x : showMI mc xs
+    showMI mc (x:xs) = if mc then
+      printf "%04x     %s" (assembleInst x) (show x) : showMI mc xs else
+      show x : showMI mc xs
     
     addAddrs :: Int -> [String] -> [String]
     addAddrs _ [] = []
-    addAddrs a (x:xs) = (printf "%06x   %s" a x) : addAddrs (a+1) xs
+    addAddrs a (x:xs) = printf "%06x   %s" a x : addAddrs (a+1) xs
 
 --------------------------------------------------------------------------------
 -- Parser
@@ -157,28 +154,28 @@ toString withAddrs withMachCode ms =
 
 assembleInst :: MachInst -> Word16
 assembleInst i = case i of
-  MI_addwf   f d -> 0x0700 .|. (dsel d) .|. (freg f)
-  MI_andwf   f d -> 0x0500 .|. (dsel d) .|. (freg f)
-  MI_clrf    f   -> 0x0180              .|. (freg f)
+  MI_addwf   f d -> 0x0700 .|. dsel d .|. freg f
+  MI_andwf   f d -> 0x0500 .|. dsel d .|. freg f
+  MI_clrf    f   -> 0x0180            .|. freg f
   MI_clrw        -> 0x0100
-  MI_comf    f d -> 0x0900 .|. (dsel d) .|. (freg f)
-  MI_decf    f d -> 0x0300 .|. (dsel d) .|. (freg f)
-  MI_decfsz  f d -> 0x0b00 .|. (dsel d) .|. (freg f)
-  MI_incf    f d -> 0x0a00 .|. (dsel d) .|. (freg f)
-  MI_incfsz  f d -> 0x0f00 .|. (dsel d) .|. (freg f)
-  MI_iorwf   f d -> 0x0400 .|. (dsel d) .|. (freg f)
-  MI_movf    f d -> 0x0800 .|. (dsel d) .|. (freg f)
-  MI_movwf   f   -> 0x0080              .|. (freg f)
+  MI_comf    f d -> 0x0900 .|. dsel d .|. freg f
+  MI_decf    f d -> 0x0300 .|. dsel d .|. freg f
+  MI_decfsz  f d -> 0x0b00 .|. dsel d .|. freg f
+  MI_incf    f d -> 0x0a00 .|. dsel d .|. freg f
+  MI_incfsz  f d -> 0x0f00 .|. dsel d .|. freg f
+  MI_iorwf   f d -> 0x0400 .|. dsel d .|. freg f
+  MI_movf    f d -> 0x0800 .|. dsel d .|. freg f
+  MI_movwf   f   -> 0x0080            .|. freg f
   MI_nop         -> 0x0000
-  MI_rlf     f d -> 0x0d00 .|. (dsel d) .|. (freg f)
-  MI_rrf     f d -> 0x0c00 .|. (dsel d) .|. (freg f)
-  MI_subwf   f d -> 0x0200 .|. (dsel d) .|. (freg f)
-  MI_swapf   f d -> 0x0e00 .|. (dsel d) .|. (freg f)
-  MI_xorwf   f d -> 0x0600 .|. (dsel d) .|. (freg f)
-  MI_bcf     f b -> 0x1000 .|. (bpos b) .|. (freg f)
-  MI_bsf     f b -> 0x1400 .|. (bpos b) .|. (freg f)
-  MI_btfsc   f b -> 0x1800 .|. (bpos b) .|. (freg f)
-  MI_btfss   f b -> 0x1c00 .|. (bpos b) .|. (freg f)
+  MI_rlf     f d -> 0x0d00 .|. dsel d .|. freg f
+  MI_rrf     f d -> 0x0c00 .|. dsel d .|. freg f
+  MI_subwf   f d -> 0x0200 .|. dsel d .|. freg f
+  MI_swapf   f d -> 0x0e00 .|. dsel d .|. freg f
+  MI_xorwf   f d -> 0x0600 .|. dsel d .|. freg f
+  MI_bcf     f b -> 0x1000 .|. bpos b .|. freg f
+  MI_bsf     f b -> 0x1400 .|. bpos b .|. freg f
+  MI_btfsc   f b -> 0x1800 .|. bpos b .|. freg f
+  MI_btfss   f b -> 0x1c00 .|. bpos b .|. freg f
   MI_addlw   k   -> 0x3e00 .|. (k .&. 0x00ff)
   MI_andlw   k   -> 0x3900 .|. (k .&. 0x00ff)
   MI_call    k   -> 0x2000 .|. (k .&. 0x07ff)
@@ -265,5 +262,5 @@ fromIntelHex = concatBytes . getWords
     
     getWords :: [I.Record] -> [Word8]
     getWords [] = []
-    getWords ((I.Record _ _ I.Data d _):rs) = d ++ getWords rs
+    getWords (I.Record _ _ I.Data d _:rs) = d ++ getWords rs
     getWords (_:rs) = getWords rs  -- ignore non-Data records
