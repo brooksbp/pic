@@ -6,3 +6,5 @@ cabal.sandbox.config
 *.hi
 
 etc/*.pdf
+examples/IntelHex
+examples/MachInst
