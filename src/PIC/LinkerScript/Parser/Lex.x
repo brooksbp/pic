@@ -11,8 +11,13 @@ import PIC.LinkerScript.Parser.Tokens
 %wrapper "posn"
 
 $digit = 0-9
+@hexDigit = [0-9a-fA-F]
 
-@number = $digit+
+@decimalNumber = $digit+
+
+@hexNumber = 0[xX] @hexDigit+
+
+@number = @decimalNumber | @hexNumber
 
 @identifier = [a-zA-Z_\.] [a-zA-Z0-9_\.]*
 
