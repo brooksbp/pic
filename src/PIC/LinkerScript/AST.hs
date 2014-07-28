@@ -30,64 +30,37 @@ data Directive
   | Stack Int (Maybe Block)
   deriving Eq
 
+showProtected :: Bool -> String
+showProtected p = if p then " PROTECTED" else ""
+
+showShadowed :: Maybe Shadow -> String
+showShadowed = maybe "" (\s -> " SHADOWED=" ++ show s)
+
+showBlock :: Maybe Block -> String
+showBlock = maybe "" (\b -> show b)
+
+showFill :: Maybe Fill -> String
+showFill = maybe "" (\f -> " FILL=" ++ (printf "0x%x" f))
+
 instance Show Directive where
-  show (Libpath i) = "LIBPATH " ++ show i ++ "\n"
-  show (Lkrpath i) = "LKRPATH " ++ show i ++ "\n"
-  show (Files i) =   "FILES " ++ show i ++ "\n"
-  show (Include i) = "INCLUDE " ++ show i ++ "\n"
-  show (Databank name start end protected shadow) = unlines [
-      "DATABANK"
-    , " NAME=" ++ show name
-    , " START=" ++ (printf "0x%x" start)
-    , " END=" ++ (printf "0x%x" end)
-    , if protected then " PROTECTED" else ""
-    , maybe "" (\s -> " SHADOWED=" ++ show s) shadow
-    , "\n"
-    ]
-  show (Sharebank name start end protected) = unlines [
-      "SHAREBANK"
-    , " NAME=" ++ show name
-    , " START=" ++ (printf "0x%x" start)
-    , " END=" ++ (printf "0x%x" end)
-    , if protected then " PROTECTED" else ""
-    , "\n"
-    ]
-  show (Accessbank name start end protected) = unlines [
-      "ACCESSBANK"
-    , " NAME=" ++ show name
-    , " START=" ++ (printf "0x%x" start)
-    , " END=" ++ (printf "0x%x" end)
-    , if protected then " PROTECTED" else ""
-    , "\n"
-    ]
-  show (Linearmem name start end) = unlines [
-      "LINEARMEM"
-    , " NAME=" ++ show name
-    , " START=" ++ (printf "0x%x" start)
-    , " END=" ++ (printf "0x%x" end)
-    , "\n"
-    ]
-  show (Codepage name start end protected fill) = unlines [
-      "CODEPAGE"
-    , " NAME=" ++ show name
-    , " START=" ++ (printf "0x%x" start)
-    , " END=" ++ (printf "0x%x" end)
-    , if protected then " PROTECTED" else ""
-    , maybe "" (\f -> " FILL=" ++ (printf "0x%x" f)) fill
-    , "\n"
-    ]
-  show (Section name block) = unlines [
-      "SECTION"
-    , " NAME=" ++ show name
-    , show block
-    , "\n"
-    ]
-  show (Stack size block) = unlines [
-      "STACK"
-    , " SIZE=" ++ (printf "0x%x" size)
-    , maybe "" (\b -> show b) block
-    , "\n"
-    ]
+  show (Libpath i) = printf "LIBPATH %s\n" i
+  show (Lkrpath i) = printf "LKRPATH %s\n" i
+  show (Files i) =   printf "FILES %s\n" i
+  show (Include i) = printf "INCLUDE %s\n" i
+  show (Databank name start end protected shadow) =
+    printf "DATABANK NAME=%s START=0x%x END=0x%x%s%s\n" name start end (showProtected protected) (showShadowed shadow)
+  show (Sharebank name start end protected) =
+    printf "SHAREBANK NAME=%s START=0x%x END=0x%x%s\n" name start end (showProtected protected)
+  show (Accessbank name start end protected) =
+    printf "ACCESSBANK NAME=%s START=0x%x END=0x%x%s\n" name start end (showProtected protected)
+  show (Linearmem name start end) =
+    printf "LINEARMEM NAME=%s START=0x%x END=0x%x\n" name start end
+  show (Codepage name start end protected fill) =
+    printf "CODEPAGE NAME=%s START=0x%x END=0x%x%s%s\n" name start end (showProtected protected) (showFill fill)
+  show (Section name block) =
+    printf "SECTION NAME=%s %s\n" name (show block)
+  show (Stack size block) =
+    printf "STACK SIZE=0x%x%s\n" size (showBlock block)
 
 data Block
   = Rom Identifier
@@ -95,8 +68,8 @@ data Block
   deriving Eq
 
 instance Show Block where
-  show (Rom name) = "ROM=" ++ show name
-  show (Ram name) = "RAM=" ++ show name
+  show (Rom name) = printf "ROM=%s" name
+  show (Ram name) = printf "RAM=%s" name
 
 type Address = Int
 
@@ -107,6 +80,6 @@ type Protected = Bool
 data Shadow = Shadow Identifier Address deriving Eq
 
 instance Show Shadow where
-  show (Shadow name addr) = show name ++ ":" ++ (printf "0x%x" addr)
+  show (Shadow name addr) = printf "%s:0x%x" name addr
 
 type Fill = Int
