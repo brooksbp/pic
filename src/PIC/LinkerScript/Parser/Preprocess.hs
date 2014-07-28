@@ -25,10 +25,10 @@ defaultMacros = [
     ("_CRUNTIME","")
   , ("_EXTENDEDMODE","")
   , ("_DEBUG","")
-  , ("_DEBUGCODESTART","")
-  , ("_DEBUGCODELEN","")
-  , ("_DEBUGDATASTART","")
-  , ("_DEBUGDATALEN","")
+  , ("_DEBUGCODESTART","0x0")
+  , ("_DEBUGCODELEN","0xFF")
+  , ("_DEBUGDATASTART","0x100")
+  , ("_DEBUGDATALEN","0x1FF")
   ]
 
 -- | A simple preprocessor.
@@ -51,13 +51,11 @@ preprocess env file content = unlines $ pp True [] env $ lines $ uncomment file 
 
 
 ppLine :: [(String, String)] -> String -> String
-ppLine _ s = s
--- FIXME: proper macro subs
--- ppLine _ "" = ""
--- ppLine env a = case lookup name env of
---   Just value -> value ++ ppLine env rest
---   Nothing    -> name  ++ ppLine env rest
---   where
---     name = takeWhile (flip elem $ ['A'..'Z'] ++ ['a'..'z'] ++ ['0'..'9'] ++ ['_']) a
---     rest = drop (length name) a
--- ppLine env (a : b) = a : ppLine env b
+ppLine _ "" = ""
+ppLine env ('_' : a) = case lookup ("_" ++ name) env of
+  Just value -> value ++ ppLine env rest
+  Nothing    -> error $ "Undefined macro: _" ++ name ++ " Env: " ++ show env
+  where
+    name = takeWhile (flip elem $ ['A'..'Z'] ++ ['a'..'z'] ++ ['0'..'9'] ++ ['_']) a
+    rest = drop (length name) a
+ppLine env (a : b) = a : ppLine env b

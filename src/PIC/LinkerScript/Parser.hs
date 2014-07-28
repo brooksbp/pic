@@ -2,6 +2,7 @@ module PIC.LinkerScript.Parser
   ( parseFile
   , preprocess
   , uncomment
+  , defaultMacros
   ) where
 
 import PIC.LinkerScript.AST
