@@ -80,7 +80,7 @@ MaybeShadow :: { Maybe Shadow }
 | Shadow { Just $1 }
 
 Shadow :: { Shadow }
-: "SHADOWED" "=" Identifier ":" Address { ($3, $5) }
+: "SHADOWED" "=" Identifier ":" Address { Shadow $3 $5 }
 
 MaybeFill :: { Maybe Fill }
 :      { Nothing }

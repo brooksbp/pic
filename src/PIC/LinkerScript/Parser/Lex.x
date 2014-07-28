@@ -14,9 +14,10 @@ $digit = 0-9
 
 @number = $digit+
 
-@identifier = [a-zA-Z_.] [a-zA-Z0-9_.\$]*
+@identifier = [a-zA-Z_\.] [a-zA-Z0-9_\.]*
 
 tokens :-
+
   "LIBPATH"         { tok KW_libpath }
   "LKRPATH"         { tok KW_lkrpath }
   "FILES"           { tok KW_files }
@@ -45,7 +46,7 @@ tokens :-
   "="               { tok Sym_eq }
   ":"               { tok Sym_col }
 
-  $white ;
+  $white+ ;
   .                 { tok Unknown }
 
 {

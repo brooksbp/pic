@@ -8,3 +8,4 @@ cabal.sandbox.config
 etc/*.pdf
 examples/IntelHex
 examples/MachInst
+examples/LinkerScript
