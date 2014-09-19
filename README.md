@@ -94,6 +94,7 @@ Assembly lang (.asm)
 .asm + .lkr -> .hex
 
 .asm -> .o
+
 .o + .lkr -> .hex
 
 .asm directives
