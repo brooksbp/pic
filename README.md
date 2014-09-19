@@ -98,3 +98,7 @@ Assembly lang (.asm)
 .o + .lkr -> .hex
 
 .asm directives
+
+MachInst interpreter
+
+.hex / PIC16 simulator
