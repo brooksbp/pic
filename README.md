@@ -1,4 +1,4 @@
-PIC development tools in Haskell.
+8-bit PIC16 MCU development in Haskell.
 
 Quickstart:
 
@@ -6,9 +6,14 @@ Quickstart:
 $ cabal sandbox init
 $ cabal install --only-dependencies --enable-tests
 $ cabal build
+$ cabal test
 ```
 
 Examples:
+
+```bash
+alias ghc-sandbox='ghc -no-user-package-db -package-db .cabal-sandbox/*-packages.conf.d'
+```
 
 ```bash
 # Parse and show Intel Hex.
