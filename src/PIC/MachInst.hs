@@ -73,6 +73,7 @@ data MachInst
   | MI_sleep
   | MI_sublw    Lit
   | MI_xorlw    Lit
+  deriving (Eq)
 
 --------------------------------------------------------------------------------
 -- Printer
