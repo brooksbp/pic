@@ -37,10 +37,10 @@ showShadowed :: Maybe Shadow -> String
 showShadowed = maybe "" (\s -> " SHADOWED=" ++ show s)
 
 showBlock :: Maybe Block -> String
-showBlock = maybe "" (\b -> show b)
+showBlock = maybe "" show
 
 showFill :: Maybe Fill -> String
-showFill = maybe "" (\f -> " FILL=" ++ (printf "0x%x" f))
+showFill = maybe "" (\f -> " FILL=" ++ printf "0x%x" f)
 
 instance Show Directive where
   show (Libpath i) = printf "LIBPATH %s\n" i
