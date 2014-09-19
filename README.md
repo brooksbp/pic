@@ -83,3 +83,17 @@ SECTION NAME=IDLOCS ROM=.idlocs
 SECTION NAME=CALIBR ROM=.calib
 SECTION NAME=DEEPROM ROM=eedata
 ```
+
+TODO
+
+Assembly lang (.asm)
+- AST
+- Parser
+- Printer
+
+.asm + .lkr -> .hex
+
+.asm -> .o
+.o + .lkr -> .hex
+
+.asm directives
